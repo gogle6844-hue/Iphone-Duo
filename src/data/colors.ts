@@ -1,0 +1,46 @@
+import { PhoneColorConfig, PhoneColorId } from '../types.ts';
+
+export const PHONE_COLORS: Record<PhoneColorId, PhoneColorConfig> = {
+  nightsky: {
+    id: 'nightsky',
+    name: '나이트 스카이',
+    nameEn: 'Night Sky',
+    tagline: '깊은 밤하늘의 고요와 은하수의 신비를 품은 미드나이트 인디고',
+    description:
+      '항공우주 등급의 미드나이트 티타늄 합금과 미세 스타더스트 세라믹 글래스를 정밀하게 융합했습니다. 각도에 따라 은은하게 감도는 심연의 블루-블랙 광채가 특징입니다.',
+    chassisBg: '#0b0f19',
+    chassisBorder: '#1e293b',
+    glareColor: 'rgba(96, 165, 250, 0.45)',
+    hingeBg: 'linear-gradient(to bottom, #1e293b, #0f172a, #1e293b)',
+    glowBg: 'rgba(56, 189, 248, 0.16)',
+    accent: '#38bdf8',
+    accentGlow: 'rgba(56, 189, 248, 0.35)',
+    badgeBg: 'bg-slate-900/90',
+    badgeText: 'text-sky-400',
+    badgeBorder: 'border-sky-500/30',
+    textColor: '#ffffff',
+    subtextColor: '#94a3b8',
+    chipLuster: 'linear-gradient(135deg, #0b0f19 0%, #1e293b 50%, #0f172a 100%)',
+  },
+  starwhite: {
+    id: 'starwhite',
+    name: '스타 화이트',
+    nameEn: 'Star White',
+    tagline: '눈부신 별빛의 투명함과 펄 세라믹의 영롱함을 담은 퓨어 화이트',
+    description:
+      '초미세 다이아몬드 밀링 처리된 스타 실버 티타늄 프레임과 순백의 펄 세라믹 백글래스로 완성되었습니다. 맑고 찬란한 빛을 부드럽게 반사하여 변치 않는 순수함을 전합니다.',
+    chassisBg: '#f8fafc',
+    chassisBorder: '#cbd5e1',
+    glareColor: 'rgba(255, 255, 255, 0.95)',
+    hingeBg: 'linear-gradient(to bottom, #f1f5f9, #94a3b8, #cbd5e1)',
+    glowBg: 'rgba(255, 255, 255, 0.25)',
+    accent: '#0284c7',
+    accentGlow: 'rgba(255, 255, 255, 0.4)',
+    badgeBg: 'bg-slate-100',
+    badgeText: 'text-slate-900',
+    badgeBorder: 'border-slate-300',
+    textColor: '#0f172a',
+    subtextColor: '#64748b',
+    chipLuster: 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e2e8f0 100%)',
+  },
+};

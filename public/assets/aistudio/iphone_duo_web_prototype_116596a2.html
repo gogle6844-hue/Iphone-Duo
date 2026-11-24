@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPhone Duo — Two Screens. One Masterpiece.</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        apple: {
+                            black: '#000000',
+                            card: '#121215',
+                            cardBorder: '#22222a',
+                            subText: '#86868b',
+                            lightText: '#f5f5f7',
+                            accent: '#2997ff',
+                            accentGlow: '#0071e3'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        /* Apple Glassmorphism */
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .glass-card {
+            background: rgba(18, 18, 21, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Fluid Gradient Text */
+        .duo-gradient-text {
+            background: linear-gradient(135deg, var(--theme-accent, #2997ff) 0%, #a8cfff 45%, #ffffff 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 3D Hardware Accelerated Folding Rig */
+        .stage-perspective {
+            perspective: 1400px;
+            perspective-origin: 50% 45%;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        /* Spring-Loaded Bezier Transitions */
+        .ease-apple-spring {
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Dynamic Hinge Crease Shadow */
+        .hinge-shadow-overlay {
+            background: linear-gradient(
+                90deg, 
+                rgba(0,0,0,0.7) 0%, 
+                rgba(0,0,0,0.15) 35%, 
+                rgba(0,0,0,0) 50%, 
+                rgba(0,0,0,0.15) 65%, 
+                rgba(0,0,0,0.7) 100%
+            );
+        }
+
+        /* Metallic Frame Edge Reflection Glow */
+        .chassis-glare {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Drag & Drop Transfer Animation */
+        @keyframes transfer-item {
+            0% { transform: translateX(0) scale(1); opacity: 1; }
+            50% { transform: translateX(120px) scale(1.1); opacity: 0.8; }
+            100% { transform: translateX(240px) scale(1); opacity: 1; }
+        }
+        .animate-transfer {
+            animation: transfer-item 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body x-data="{
+    // State Controls
+    foldState: 'unfolded', // 'folded', 'flex', 'unfolded'
+    selectedColor: 'spaceblack', // 'spaceblack', 'silver', 'gold', 'violet'
+    activeTask: 'multitask', // 'multitask', 'dragdrop', 'laptop'
+    dragged: false,
+    modalOpen: false,
+    email: '',
+    emailSubmitted: false,
+    mobileNav: false,
+
+    // Real-Time Color Palette Configuration
+    colors: {
+        spaceblack: {
+            name: '스페이스 블랙 (Space Black)',
+            chassisBg: 'rgb(20, 20, 24)',
+            chassisBorder: 'rgb(45, 45, 55)',
+            glareColor: 'rgba(255, 255, 255, 0.15)',
+            hingeBg: 'linear-gradient(to bottom, #2a2a32, #141418)',
+            glowBg: 'rgba(41, 151, 255, 0.15)',
+            accent: '#2997ff',
+            badgeBg: 'bg-neutral-900',
+            badgeText: 'text-blue-400'
+        },
+        silver: {
+            name: '내추럴 실버 (Natural Silver)',
+            chassisBg: 'rgb(215, 218, 224)',
+            chassisBorder: 'rgb(240, 242, 245)',
+            glareColor: 'rgba(255, 255, 255, 0.7)',
+            hingeBg: 'linear-gradient(to bottom, #e2e8f0, #94a3b8)',
+            glowBg: 'rgba(255, 255, 255, 0.25)',
+            accent: '#38bdf8',
+            badgeBg: 'bg-slate-200',
+            badgeText: 'text-slate-900'
+        },
+        gold: {
+            name: '데저트 골드 (Desert Gold)',
+            chassisBg: 'rgb(62, 48, 36)',
+            chassisBorder: 'rgb(180, 142, 90)',
+            glareColor: 'rgba(254, 240, 138, 0.35)',
+            hingeBg: 'linear-gradient(to bottom, #d4af37, #4a3b2c)',
+            glowBg: 'rgba(212, 175, 55, 0.25)',
+            accent: '#eab308',
+            badgeBg: 'bg-amber-950',
+            badgeText: 'text-amber-300'
+        },
+        violet: {
+            name: '딥 티타늄 (Deep Titanium)',
+            chassisBg: 'rgb(35, 38, 48)',
+            chassisBorder: 'rgb(75, 85, 110)',
+            glareColor: 'rgba(168, 85, 247, 0.3)',
+            hingeBg: 'linear-gradient(to bottom, #6366f1, #1e1b4b)',
+            glowBg: 'rgba(147, 51, 234, 0.2)',
+            accent: '#a855f7',
+            badgeBg: 'bg-purple-950',
+            badgeText: 'text-purple-300'
+        }
+    },
+
+    submitEmail() {
+        if (this.email.trim().length > 3) {
+            this.emailSubmitted = true;
+            setTimeout(() => {
+                this.modalOpen = false;
+                this.emailSubmitted = false;
+                this.email = '';
+            }, 2000);
+        }
+    }
+}" 
+:style="`--theme-accent: ${colors[selectedColor].accent};`"
+class="bg-black text-apple-lightText font-sans antialiased overflow-x-hidden selection:bg-apple-accent selection:text-white">
+
+    <!-- 1. STICKY GLASS HEADER -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-neutral-800/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between text-xs sm:text-sm">
+            <!-- Logo -->
+            <a href="#hero" class="flex items-center space-x-2 tracking-tight group">
+                <i data-lucide="apple" class="w-4 h-4 text-white group-hover:scale-110 transition-transform"></i>
+                <span class="text-base font-medium">iPhone <span :style="`color: ${colors[selectedColor].accent};`" class="font-bold">Duo</span></span>
+            </a>
+
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center space-x-8 text-apple-subText font-medium text-xs tracking-wide">
+                <a href="#hero" class="hover:text-white transition-colors">개요</a>
+                <a href="#color-picker" class="hover:text-white transition-colors">컬러 셀렉터</a>
+                <a href="#duo-os" class="hover:text-white transition-colors">DuoOS 멀티태스킹</a>
+                <a href="#bento-tech" class="hover:text-white transition-colors">핵심 기술</a>
+                <a href="#specs" class="hover:text-white transition-colors">스펙 비교</a>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-3">
+                <button @click="modalOpen = true" 
+                        :style="`background-color: ${colors[selectedColor].accent};`"
+                        class="text-white font-medium px-4 py-1.5 rounded-full transition-all text-xs shadow-lg active:scale-95">
+                    사전 예약 알림
+                </button>
+                <button @click="mobileNav = !mobileNav" class="md:hidden text-apple-subText hover:text-white p-1">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div x-show="mobileNav" x-transition @click.away="mobileNav = false" class="md:hidden px-6 pt-3 pb-6 space-y-4 bg-neutral-950 border-b border-neutral-800 text-sm">
+            <a href="#hero" @click="mobileNav = false" class="block font-medium">개요</a>
+            <a href="#color-picker" @click="mobileNav = false" class="block font-medium">컬러 셀렉터</a>
+            <a href="#duo-os" @click="mobileNav = false" class="block font-medium">DuoOS 멀티태스킹</a>
+            <a href="#bento-tech" @click="mobileNav = false" class="block font-medium">핵심 기술</a>
+            <a href="#specs" @click="mobileNav = false" class="block font-medium">스펙 비교</a>
+        </div>
+    </nav>
+
+    <!-- 2. HERO SECTION WITH WORKING REAL-TIME CHASSIS COLOR SYNCHRONIZATION -->
+    <section id="hero" class="min-h-screen pt-28 pb-16 flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
+        
+        <!-- Dynamic Background Glow responding to selected color -->
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full blur-[160px] pointer-events-none transition-all duration-700"
+             :style="`background-color: ${colors[selectedColor].glowBg};`"></div>
+
+        <!-- Pill Tagline -->
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-xs font-semibold mb-6 tracking-wide shadow-inner">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5" :style="`color: ${colors[selectedColor].accent};`"></i>
+            <span :style="`color: ${colors[selectedColor].accent};`">차세대 듀얼 스크린 이노베이션</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-4 max-w-5xl leading-[1.08]">
+            Two Screens.<br> <span class="duo-gradient-text">One Masterpiece.</span>
+        </h1>
+        <p class="text-lg sm:text-2xl text-apple-subText max-w-2xl font-normal mb-8 leading-relaxed">
+            두 개의 Super Retina XDR 디스플레이가 하나로 연결됩니다.<br class="hidden sm:inline"> 자유롭게 접히고, 완벽하게 펼쳐지는 듀오 폼팩터를 경험하세요.
+        </p>
+
+        <!-- Dynamic Color Status Pill -->
+        <div class="mb-8 inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300"
+             :class="colors[selectedColor].badgeBg">
+            <span class="w-2.5 h-2.5 rounded-full border border-white/20" :style="`background-color: ${colors[selectedColor].chassisBg};`"></span>
+            <span :class="colors[selectedColor].badgeText" x-text="`선택된 색상: ${colors[selectedColor].name}`"></span>
+        </div>
+
+        <!-- Interactive Physics Mode Controller -->
+        <div class="flex items-center space-x-1.5 bg-neutral-900/90 p-1.5 rounded-full border border-neutral-800 z-30 mb-12 shadow-2xl backdrop-blur-xl">
+            <button @click="foldState = 'folded'" 
+                    :style="foldState === 'folded' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                    :class="foldState === 'folded' ? 'shadow-lg' : 'text-apple-subText hover:text-white'"
+                    class="px-5 py-2 rounded-full text-xs font-semibold transition-all duration-300">
+                싱글 모드 (6.3")
+            </button>
+            <button @click="foldState = 'flex'" 
+                    :style="foldState === 'flex' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                    :class="foldState === 'flex' ? 'shadow-lg' : 'text-apple-subText hover:text-white'"
+                    class="px-5 py-2 rounded-full text-xs font-semibold transition-all duration-300">
+                플렉스 탠덤 (110°)
+            </button>
+            <button @click="foldState = 'unfolded'" 
+                    :style="foldState === 'unfolded' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                    :class="foldState === 'unfolded' ? 'shadow-lg' : 'text-apple-subText hover:text-white'"
+                    class="px-5 py-2 rounded-full text-xs font-semibold transition-all duration-300">
+                듀얼 울트라 (8.1")
+            </button>
+        </div>
+
+        <!-- 3D HARDWARE ACCELERATED FOLDING DEVICE STAGE -->
+        <div class="stage-perspective w-full max-w-5xl h-[380px] sm:h-[480px] md:h-[540px] flex items-center justify-center relative my-4">
+            
+            <!-- Root 3D Orientation Rig -->
+            <div class="preserve-3d flex items-center justify-center ease-apple-spring"
+                 :class="{
+                     '-rotate-y-12 rotate-x-6 scale-90': foldState === 'folded',
+                     'rotate-x-25 -rotate-y-15 scale-95': foldState === 'flex',
+                     'rotate-x-0 rotate-y-0 scale-100': foldState === 'unfolded'
+                 }">
+
+                <!-- LEFT DISPLAY PANEL (CHASSIS COLOR DIRECTLY APPLIED) -->
+                <div class="preserve-3d relative w-44 sm:w-64 md:w-72 h-80 sm:h-[420px] md:h-[460px] rounded-[2.6rem] p-3 border-[6px] ease-apple-spring origin-right shadow-2xl overflow-hidden chassis-glare"
+                     :style="`background-color: ${colors[selectedColor].chassisBg}; border-color: ${colors[selectedColor].chassisBorder};`"
+                     :class="{
+                         'rotate-y-180 z-10 translate-x-[98%]': foldState === 'folded',
+                         'rotate-y-55 z-20': foldState === 'flex',
+                         'rotate-y-0 z-20': foldState === 'unfolded'
+                     }">
+                    
+                    <!-- Dynamic Edge Glare Overlay -->
+                    <div class="absolute inset-0 pointer-events-none rounded-[2.3rem] opacity-60 transition-all duration-500"
+                         :style="`background: linear-gradient(135deg, ${colors[selectedColor].glareColor} 0%, transparent 60%);`"></div>
+
+                    <!-- Dynamic Island Punchhole -->
+                    <div class="w-20 h-5 bg-black rounded-full mx-auto relative z-30 flex items-center justify-end px-2 border border-neutral-800">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-950 border border-blue-500/40"></div>
+                    </div>
+
+                    <!-- Left Screen Content Area -->
+                    <div class="absolute inset-0 m-2 rounded-[2.1rem] bg-gradient-to-br from-neutral-900 via-slate-950 to-black overflow-hidden flex flex-col justify-between p-4 pt-9 border border-neutral-800/80">
+                        <!-- Top Status Bar -->
+                        <div class="flex justify-between items-center text-[10px] text-neutral-400 font-medium px-1">
+                            <span>09:41</span>
+                            <div class="flex space-x-1.5">
+                                <i data-lucide="wifi" class="w-3 h-3"></i>
+                                <i data-lucide="battery" class="w-3 h-3 text-emerald-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Left UI Preview Content -->
+                        <div class="space-y-3 my-auto text-left">
+                            <div class="p-3 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-lg">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[9px] font-bold uppercase tracking-widest" :style="`color: ${colors[selectedColor].accent};`">Left Screen (Primary)</span>
+                                    <span class="w-2 h-2 rounded-full" :style="`background-color: ${colors[selectedColor].accent};`"></span>
+                                </div>
+                                <p class="text-xs font-bold text-white">4K Pro display 동기화</p>
+                                <p class="text-[10px] text-neutral-400 mt-0.5">Dual Super Retina XDR</p>
+                            </div>
+                            
+                            <div class="h-28 rounded-xl bg-gradient-to-tr from-blue-900/40 via-purple-900/30 to-black border border-neutral-800 p-3 flex flex-col justify-between relative overflow-hidden">
+                                <i data-lucide="play-circle" class="w-8 h-8 text-white/80 m-auto"></i>
+                                <div class="w-full bg-neutral-700/50 h-1 rounded-full overflow-hidden">
+                                    <div class="w-2/3 h-full" :style="`background-color: ${colors[selectedColor].accent};`"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="h-1 bg-neutral-600 rounded-full w-20 mx-auto opacity-60"></div>
+                    </div>
+
+                    <!-- Crease Dynamic Shadow -->
+                    <div class="absolute inset-y-0 right-0 w-12 hinge-shadow-overlay pointer-events-none transition-opacity duration-700"
+                         :class="foldState === 'unfolded' ? 'opacity-20' : 'opacity-80'"></div>
+                </div>
+
+                <!-- DUAL TITANIUM HINGE SPINE (COLOR SYNCHRONIZED) -->
+                <div class="w-3.5 sm:w-4 h-72 sm:h-[380px] md:h-[415px] z-30 rounded-sm shadow-2xl border-y border-neutral-600 flex flex-col justify-around py-8 transition-all duration-500"
+                     :style="`background: ${colors[selectedColor].hingeBg};`"
+                     :class="foldState === 'folded' ? 'opacity-40' : 'opacity-100'">
+                    <div class="w-full h-1 bg-white/20"></div>
+                    <div class="w-full h-1 bg-white/20"></div>
+                </div>
+
+                <!-- RIGHT DISPLAY PANEL (CHASSIS COLOR DIRECTLY APPLIED) -->
+                <div class="preserve-3d relative w-44 sm:w-64 md:w-72 h-80 sm:h-[420px] md:h-[460px] rounded-[2.6rem] p-3 border-[6px] ease-apple-spring origin-left shadow-2xl overflow-hidden z-20 chassis-glare"
+                     :style="`background-color: ${colors[selectedColor].chassisBg}; border-color: ${colors[selectedColor].chassisBorder};`"
+                     :class="{
+                         'rotate-y-0 shadow-neutral-950/90': foldState === 'folded',
+                         '-rotate-y-55': foldState === 'flex',
+                         'rotate-y-0': foldState === 'unfolded'
+                     }">
+                    
+                    <!-- Dynamic Edge Glare Overlay -->
+                    <div class="absolute inset-0 pointer-events-none rounded-[2.3rem] opacity-60 transition-all duration-500"
+                         :style="`background: linear-gradient(225deg, ${colors[selectedColor].glareColor} 0%, transparent 60%);`"></div>
+
+                    <!-- Right Screen Content Area -->
+                    <div class="absolute inset-0 m-2 rounded-[2.1rem] bg-gradient-to-bl from-slate-950 via-purple-950/50 to-black overflow-hidden flex flex-col justify-between p-4 pt-9 border border-neutral-800/80">
+                        
+                        <!-- Right UI Preview Content -->
+                        <div class="space-y-3 my-auto text-left">
+                            <template x-if="foldState !== 'flex'">
+                                <div class="space-y-3">
+                                    <div class="p-3 bg-purple-500/10 border border-purple-500/20 rounded-2xl backdrop-blur-lg">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <span class="text-[9px] font-bold text-purple-400 uppercase tracking-widest">Right Screen (Extended)</span>
+                                            <i data-lucide="edit-3" class="w-3.5 h-3.5 text-purple-400"></i>
+                                        </div>
+                                        <p class="text-xs font-bold text-white">Apple Pencil Duo 작업 영역</p>
+                                        <p class="text-[10px] text-neutral-400 mt-0.5">실시간 스케치 및 메모 동기화</p>
+                                    </div>
+                                    <div class="h-28 rounded-xl bg-black/60 border border-neutral-800 p-3 flex flex-col justify-between">
+                                        <p class="text-[10px] text-neutral-300 italic">"두 화면을 연결해 더 넓은 캔버스에서 정교하게 작업..."</p>
+                                        <span class="text-[9px] text-purple-400 text-right">0.01ms ultra-low latency</span>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Specialized Laptop Layout in Flex Mode -->
+                            <template x-if="foldState === 'flex'">
+                                <div class="space-y-2">
+                                    <div class="p-2.5 bg-neutral-900 rounded-xl border border-neutral-800 text-center">
+                                        <span class="text-[9px] font-bold uppercase" :style="`color: ${colors[selectedColor].accent};`">Virtual Touchpad & Keyboard</span>
+                                    </div>
+                                    <div class="grid grid-cols-5 gap-1 bg-black/80 p-2 rounded-lg border border-neutral-800 text-[8px] text-center font-mono">
+                                        <div class="p-1 bg-neutral-800 rounded">Q</div>
+                                        <div class="p-1 bg-neutral-800 rounded">W</div>
+                                        <div class="p-1 bg-neutral-800 rounded">E</div>
+                                        <div class="p-1 bg-neutral-800 rounded">R</div>
+                                        <div class="p-1 bg-neutral-800 rounded">T</div>
+                                    </div>
+                                    <div class="h-14 bg-neutral-900 rounded-lg border border-neutral-800 flex items-center justify-center text-[9px] text-neutral-500">
+                                        Haptic Touchpad Active
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="h-1 bg-neutral-600 rounded-full w-20 mx-auto opacity-60"></div>
+                    </div>
+
+                    <!-- Crease Dynamic Shadow -->
+                    <div class="absolute inset-y-0 left-0 w-12 hinge-shadow-overlay pointer-events-none transition-opacity duration-700"
+                         :class="foldState === 'unfolded' ? 'opacity-20' : 'opacity-80'"></div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. REAL-TIME COLOR PICKER & LIVE PREVIEW SHOWCASE SECTION -->
+    <section id="color-picker" class="py-24 px-4 max-w-5xl mx-auto text-center border-t border-neutral-900">
+        <span class="text-xs font-bold uppercase tracking-widest" :style="`color: ${colors[selectedColor].accent};`">COLOR FINISHES</span>
+        <h2 class="text-3xl sm:text-5xl font-bold mt-2 mb-3">티타늄 합금 마감 선택</h2>
+        <p class="text-apple-subText mb-12">클릭 시 제품 샤시 및 프레임 색상이 상단 3D 모델과 본 카드에 즉시 반영됩니다.</p>
+
+        <!-- Dynamic Color Display Card -->
+        <div class="relative w-72 sm:w-96 h-[420px] mx-auto rounded-[3rem] p-8 transition-all duration-700 flex flex-col justify-between items-center shadow-2xl border-4 chassis-glare"
+             :style="`background-color: ${colors[selectedColor].chassisBg}; border-color: ${colors[selectedColor].chassisBorder};`">
+            
+            <!-- Metallic Glare Effect -->
+            <div class="absolute inset-0 pointer-events-none rounded-[2.8rem] opacity-50"
+                 :style="`background: linear-gradient(135deg, ${colors[selectedColor].glareColor} 0%, transparent 70%);`"></div>
+
+            <div class="w-full flex justify-between items-center text-[10px] font-semibold tracking-wider text-neutral-400">
+                <span>TITANIUM FINISH</span>
+                <span class="w-2 h-2 rounded-full" :style="`background-color: ${colors[selectedColor].accent};`"></span>
+            </div>
+
+            <!-- Device Illustration Representation -->
+            <div class="text-center my-auto z-10">
+                <div class="w-28 h-28 mx-auto mb-6 rounded-3xl flex items-center justify-center border-2 shadow-inner"
+                     :style="`background-color: rgba(0,0,0,0.4); border-color: ${colors[selectedColor].chassisBorder};`">
+                    <i data-lucide="smartphone" class="w-16 h-16 text-white opacity-90"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1" x-text="colors[selectedColor].name"></h3>
+                <p class="text-xs text-neutral-400">항공우주 등급 티타늄 아노다이징</p>
+            </div>
+
+            <div class="w-full pt-4 border-t border-white/10 flex justify-between items-center text-xs">
+                <span class="text-neutral-400">무게: 198g</span>
+                <span class="font-bold text-white">제로 갭 힌지 적용</span>
+            </div>
+        </div>
+
+        <!-- Color Swatches Control Grid -->
+        <div class="flex items-center justify-center space-x-6 mt-10">
+            <!-- Space Black -->
+            <button @click="selectedColor = 'spaceblack'" 
+                    title="스페이스 블랙"
+                    class="w-12 h-12 rounded-full border-2 transition-all shadow-xl flex items-center justify-center"
+                    :style="`background-color: ${colors.spaceblack.chassisBg};`"
+                    :class="selectedColor === 'spaceblack' ? 'scale-125 border-white ring-4 ring-blue-500/30' : 'border-neutral-700 hover:scale-110'">
+                <span x-show="selectedColor === 'spaceblack'" class="w-2 h-2 rounded-full bg-blue-400"></span>
+            </button>
+            
+            <!-- Natural Silver -->
+            <button @click="selectedColor = 'silver'" 
+                    title="내추럴 실버"
+                    class="w-12 h-12 rounded-full border-2 transition-all shadow-xl flex items-center justify-center"
+                    :style="`background-color: ${colors.silver.chassisBg};`"
+                    :class="selectedColor === 'silver' ? 'scale-125 border-white ring-4 ring-sky-500/30' : 'border-neutral-700 hover:scale-110'">
+                <span x-show="selectedColor === 'silver'" class="w-2 h-2 rounded-full bg-slate-900"></span>
+            </button>
+
+            <!-- Desert Gold -->
+            <button @click="selectedColor = 'gold'" 
+                    title="데저트 골드"
+                    class="w-12 h-12 rounded-full border-2 transition-all shadow-xl flex items-center justify-center"
+                    :style="`background-color: ${colors.gold.chassisBg};`"
+                    :class="selectedColor === 'gold' ? 'scale-125 border-white ring-4 ring-amber-500/30' : 'border-neutral-700 hover:scale-110'">
+                <span x-show="selectedColor === 'gold'" class="w-2 h-2 rounded-full bg-amber-300"></span>
+            </button>
+
+            <!-- Deep Titanium -->
+            <button @click="selectedColor = 'violet'" 
+                    title="딥 티타늄"
+                    class="w-12 h-12 rounded-full border-2 transition-all shadow-xl flex items-center justify-center"
+                    :style="`background-color: ${colors.violet.chassisBg};`"
+                    :class="selectedColor === 'violet' ? 'scale-125 border-white ring-4 ring-purple-500/30' : 'border-neutral-700 hover:scale-110'">
+                <span x-show="selectedColor === 'violet'" class="w-2 h-2 rounded-full bg-purple-400"></span>
+            </button>
+        </div>
+    </section>
+
+    <!-- 4. DUO OS INTERACTIVE MULTITASKING SIMULATOR -->
+    <section id="duo-os" class="py-28 bg-neutral-950 border-y border-neutral-900">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest" :style="`color: ${colors[selectedColor].accent};`">DuoOS WORKSPACE</span>
+                <h2 class="text-3xl sm:text-5xl font-bold mt-2">앱과 앱 사이의 경계가 사라지다</h2>
+                <p class="text-apple-subText mt-3 text-sm sm:text-base max-w-xl mx-auto">
+                    독립적인 두 개의 디스플레이에서 동시 작업을 수행하거나, 데이터를 즉시 끌어다 놓으세요.
+                </p>
+            </div>
+
+            <!-- Task Controller -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex bg-neutral-900 p-1.5 rounded-full border border-neutral-800">
+                    <button @click="activeTask = 'multitask'" 
+                            :style="activeTask === 'multitask' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                            :class="activeTask === 'multitask' ? 'shadow' : 'text-apple-subText hover:text-white'"
+                            class="px-5 py-2 rounded-full text-xs font-semibold transition-all">
+                        독립 듀얼 앱 실행
+                    </button>
+                    <button @click="activeTask = 'dragdrop'" 
+                            :style="activeTask === 'dragdrop' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                            :class="activeTask === 'dragdrop' ? 'shadow' : 'text-apple-subText hover:text-white'"
+                            class="px-5 py-2 rounded-full text-xs font-semibold transition-all">
+                        실시간 드래그 앤 드롭
+                    </button>
+                    <button @click="activeTask = 'laptop'" 
+                            :style="activeTask === 'laptop' ? `background-color: ${colors[selectedColor].accent}; color: #fff;` : ''"
+                            :class="activeTask === 'laptop' ? 'shadow' : 'text-apple-subText hover:text-white'"
+                            class="px-5 py-2 rounded-full text-xs font-semibold transition-all">
+                        노트북 탠덤 키보드
+                    </button>
+                </div>
+            </div>
+
+            <!-- Simulated OS Workspace -->
+            <div class="glass-card rounded-3xl p-4 sm:p-6 border border-neutral-800 max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+                <div class="w-full h-80 sm:h-[420px] bg-black rounded-2xl p-3 flex gap-3 relative">
+                    
+                    <!-- Left Screen Panel -->
+                    <div class="w-1/2 h-full bg-neutral-900 rounded-xl p-4 flex flex-col justify-between border border-neutral-800 relative overflow-hidden">
+                        <div class="flex justify-between items-center text-[10px] text-neutral-400">
+                            <span class="font-bold" :style="`color: ${colors[selectedColor].accent};`">Left Screen: 미디어 & 갤러리</span>
+                            <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                        </div>
+
+                        <!-- Mode 1: Multitask -->
+                        <template x-if="activeTask === 'multitask'">
+                            <div class="space-y-3 my-auto">
+                                <div class="w-full h-36 bg-neutral-800 rounded-xl overflow-hidden relative border border-white/10 flex items-center justify-center">
+                                    <i data-lucide="video" class="w-10 h-10 text-blue-400/60"></i>
+                                    <span class="absolute bottom-2 left-2 text-[9px] text-neutral-300 bg-black/60 px-2 py-0.5 rounded">4K 60fps 비디오 재생 중</span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Mode 2: Drag & Drop Interactive Item -->
+                        <template x-if="activeTask === 'dragdrop'">
+                            <div class="space-y-3 my-auto">
+                                <div @click="dragged = !dragged" 
+                                     :class="dragged ? 'animate-transfer' : ''"
+                                     class="p-4 bg-blue-500/20 border border-blue-400/40 rounded-xl text-left cursor-pointer hover:bg-blue-500/30 transition-all">
+                                    <div class="flex items-center space-x-2">
+                                        <i data-lucide="image" class="w-5 h-5" :style="`color: ${colors[selectedColor].accent};`"></i>
+                                        <span class="text-xs font-bold text-white">디자인_시안_v2.png</span>
+                                    </div>
+                                    <p class="text-[10px] text-neutral-300 mt-2">클릭하여 우측 스크린 노트로 전송 ➔</p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Mode 3: Laptop Top Display -->
+                        <template x-if="activeTask === 'laptop'">
+                            <div class="space-y-2 my-auto text-left">
+                                <p class="text-xs font-bold text-purple-400">Pages 실시간 문서 편집</p>
+                                <div class="p-3 bg-neutral-800/80 rounded-lg text-xs text-neutral-300 leading-relaxed font-mono">
+                                    iPhone Duo는 듀얼 OLED의 강력함과 하드웨어 힌지의 정교함을 통합하여 생산성의 새 기준을 제시합니다...
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="text-[9px] text-neutral-600 text-center">Screen A</div>
+                    </div>
+
+                    <!-- Spine -->
+                    <div class="w-1.5 h-full bg-neutral-800 rounded-full flex flex-col justify-center items-center">
+                        <div class="w-full h-12 rounded-full" :style="`background-color: ${colors[selectedColor].accent};`"></div>
+                    </div>
+
+                    <!-- Right Screen Panel -->
+                    <div class="w-1/2 h-full bg-neutral-900 rounded-xl p-4 flex flex-col justify-between border border-neutral-800 relative overflow-hidden">
+                        <div class="flex justify-between items-center text-[10px] text-neutral-400">
+                            <span class="font-bold text-purple-400">Right Screen: 메모 & 메일</span>
+                            <i data-lucide="edit" class="w-3.5 h-3.5"></i>
+                        </div>
+
+                        <!-- Mode 1: Multitask -->
+                        <template x-if="activeTask === 'multitask'">
+                            <div class="space-y-3 my-auto">
+                                <div class="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-left">
+                                    <p class="text-xs font-bold text-white">아이디어 메모장</p>
+                                    <p class="text-[10px] text-neutral-400 mt-1">• 좌측 영상 검토 완료<br>• 실시간 스마트 클립보드 동기화</p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Mode 2: Drag & Drop Receiver -->
+                        <template x-if="activeTask === 'dragdrop'">
+                            <div class="space-y-3 my-auto">
+                                <div class="w-full h-36 border-2 border-dashed border-purple-400/50 rounded-xl flex flex-col items-center justify-center text-center p-3 bg-purple-500/5">
+                                    <i data-lucide="file-check" class="w-6 h-6 text-purple-400 mb-1"></i>
+                                    <span class="text-xs font-bold text-white" x-text="dragged ? '파일 수신 완료!' : '드롭 존 (Drop Zone)'"></span>
+                                    <span class="text-[9px] text-neutral-400 mt-0.5" x-text="dragged ? '디자인_시안_v2.png 첨부됨' : '좌측 항목을 클릭하세요'"></span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Mode 3: Laptop Virtual Keyboard -->
+                        <template x-if="activeTask === 'laptop'">
+                            <div class="space-y-2 my-auto">
+                                <div class="grid grid-cols-5 gap-1 bg-black/80 p-2 rounded-lg border border-neutral-800 text-[9px] text-center font-mono">
+                                    <div class="p-1.5 bg-neutral-800 rounded text-white">Q</div>
+                                    <div class="p-1.5 bg-neutral-800 rounded text-white">W</div>
+                                    <div class="p-1.5 bg-neutral-800 rounded text-white">E</div>
+                                    <div class="p-1.5 bg-neutral-800 rounded text-white">R</div>
+                                    <div class="p-1.5 bg-neutral-800 rounded text-white">T</div>
+                                </div>
+                                <div class="h-16 bg-neutral-800/60 rounded-lg border border-neutral-700/50 flex items-center justify-center text-[10px] text-neutral-400">
+                                    <span>Haptic Touchpad Active</span>
+                                </div>
+                            </div>
+                        </template>
+
+                        <div class="text-[9px] text-neutral-600 text-center">Screen B</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. BENTO GRID SECTION -->
+    <section id="bento-tech" class="py-28 px-4 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <span class="text-xs font-bold uppercase tracking-widest" :style="`color: ${colors[selectedColor].accent};`">HARDWARE INNOVATION</span>
+            <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mt-2">혁신의 모든 요소를 하나에</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Card 1 -->
+            <div class="md:col-span-2 glass-card rounded-3xl p-8 sm:p-10 flex flex-col justify-between">
+                <div class="max-w-xl">
+                    <span class="text-xs font-semibold uppercase tracking-wider" :style="`color: ${colors[selectedColor].accent};`">Dual Super Retina XDR</span>
+                    <h3 class="text-2xl sm:text-4xl font-bold mt-3 mb-4 text-white">8.1인치 와이드 스마트 캔버스</h3>
+                    <p class="text-apple-subText text-sm sm:text-base leading-relaxed">
+                        제로 베젤 수준의 초미세 힌지로 두 화면이 하나의 광활한 화면처럼 매끄럽게 연결됩니다. 3,000nits 피크 밝기와 ProMotion 120Hz를 완벽하게 지원합니다.
+                    </p>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <div class="w-full h-40 rounded-2xl bg-gradient-to-r from-blue-900/30 via-purple-900/20 to-neutral-900 border border-white/10 flex items-center justify-center">
+                        <i data-lucide="maximize-2" class="w-12 h-12" :style="`color: ${colors[selectedColor].accent};`"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-6">
+                        <i data-lucide="cpu" class="w-6 h-6" :style="`color: ${colors[selectedColor].accent};`"></i>
+                    </div>
+                    <span class="text-xs font-semibold uppercase tracking-wider" :style="`color: ${colors[selectedColor].accent};`">A19 Duo Chip</span>
+                    <h3 class="text-xl font-bold text-white mt-2 mb-3">독립 듀얼 NPU 엔진</h3>
+                    <p class="text-apple-subText text-sm leading-relaxed">
+                        두 스크린에서 각각 고성능 AI 프로세싱과 렌더링을 딜레이 없이 병렬 처리합니다.
+                    </p>
+                </div>
+                <div class="pt-6 border-t border-neutral-800 mt-6 flex justify-between items-center text-xs font-semibold" :style="`color: ${colors[selectedColor].accent};`">
+                    <span>처리 성능 +75%</span>
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-6">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Titanium Hinge</span>
+                    <h3 class="text-xl font-bold text-white mt-2 mb-3">100만 회 폴딩 테스트 통과</h3>
+                    <p class="text-apple-subText text-sm leading-relaxed">
+                        항공우주 등급의 티타늄 합금으로 제작되어 경량화와 강도를 동시에 달성했습니다.
+                    </p>
+                </div>
+                <div class="pt-6 border-t border-neutral-800 mt-6 flex justify-between items-center text-xs font-semibold text-purple-400">
+                    <span>초경량 198g 설계</span>
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="md:col-span-2 glass-card rounded-3xl p-8 sm:p-10 flex flex-col justify-between">
+                <div class="max-w-xl">
+                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Tandem Battery Technology</span>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-white mt-2 mb-3">하루 종일 지속되는 5,200mAh 분산 배터리</h3>
+                    <p class="text-apple-subText text-sm sm:text-base leading-relaxed">
+                        좌우 패널에 분산 탑재된 박형 배터리가 최상의 무게 밸런스와 최대 32시간의 재생 시간을 제공합니다.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="p-4 rounded-2xl bg-neutral-900/90 border border-neutral-800 flex items-center space-x-3">
+                        <i data-lucide="battery-charging" class="w-6 h-6 text-emerald-400"></i>
+                        <div>
+                            <p class="text-xs text-neutral-400">연속 영상 재생</p>
+                            <p class="text-base font-bold text-white">최대 32시간</p>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-neutral-900/90 border border-neutral-800 flex items-center space-x-3">
+                        <i data-lucide="zap" class="w-6 h-6 text-emerald-400"></i>
+                        <div>
+                            <p class="text-xs text-neutral-400">MagSafe 고속 충전</p>
+                            <p class="text-base font-bold text-white">45W 지원</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 6. TECH SPEC COMPARISON TABLE -->
+    <section id="specs" class="py-24 bg-neutral-950 border-t border-neutral-900">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-3">기술 사양 상세 비교</h2>
+                <p class="text-apple-subText text-sm">iPhone Duo와 기존 라인업의 차이점을 확인하세요.</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-neutral-800">
+                            <th class="py-4 px-4 text-xs font-semibold text-apple-subText uppercase">사양 항목</th>
+                            <th class="py-4 px-4 text-lg font-bold" :style="`color: ${colors[selectedColor].accent};`">iPhone Duo (신제품)</th>
+                            <th class="py-4 px-4 text-base font-semibold text-white">iPhone 16 Pro Max</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-800 text-sm">
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">디스플레이</td>
+                            <td class="py-4 px-4 font-semibold text-white">듀얼 6.3" Super Retina XDR (펼쳤을 때 8.1")</td>
+                            <td class="py-4 px-4 text-neutral-400">단일 6.9" Super Retina XDR</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">프로세서</td>
+                            <td class="py-4 px-4 font-semibold" :style="`color: ${colors[selectedColor].accent};`">A19 Duo Chip (듀얼 NPU)</td>
+                            <td class="py-4 px-4 text-neutral-400">A18 Pro Chip</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">멀티태스킹</td>
+                            <td class="py-4 px-4 font-semibold text-white">DuoOS 하드웨어 멀티태스킹 및 드래그 앤 드롭</td>
+                            <td class="py-4 px-4 text-neutral-400">기본 단일 앱 중심</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">펜 입력</td>
+                            <td class="py-4 px-4 font-semibold" :style="`color: ${colors[selectedColor].accent};`">Apple Pencil Duo 지원</td>
+                            <td class="py-4 px-4 text-neutral-400">미지원</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">두께 / 무게</td>
+                            <td class="py-4 px-4 font-semibold text-white">접었을 때 9.5mm / 198g</td>
+                            <td class="py-4 px-4 text-neutral-400">8.25mm / 227g</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4 px-4 font-medium text-apple-subText">출시 가격</td>
+                            <td class="py-4 px-4 font-bold" :style="`color: ${colors[selectedColor].accent};`">₩1,890,000 부터</td>
+                            <td class="py-4 px-4 text-neutral-400">₩1,900,000 부터</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. PRE-ORDER MODAL & FOOTER -->
+    <div x-show="modalOpen" 
+         x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        
+        <div @click.away="modalOpen = false" class="glass-card rounded-3xl max-w-md w-full p-8 relative border border-neutral-700 text-center shadow-2xl">
+            <button @click="modalOpen = false" class="absolute top-4 right-4 text-neutral-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <template x-if="!emailSubmitted">
+                <div>
+                    <div class="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="bell" class="w-6 h-6" :style="`color: ${colors[selectedColor].accent};`"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">사전 알림 신청하기</h3>
+                    <p class="text-xs text-apple-subText mb-6">iPhone Duo의 가장 빠른 출시 및 구매 소식을 이메일로 받으세요.</p>
+
+                    <form @submit.prevent="submitEmail()" class="space-y-4">
+                        <input type="email" 
+                               x-model="email" 
+                               placeholder="name@example.com" 
+                               required
+                               class="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-700 text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 text-sm">
+                        <button type="submit" 
+                                :style="`background-color: ${colors[selectedColor].accent};`"
+                                class="w-full text-white font-semibold py-3 rounded-xl transition-all text-sm active:scale-95 shadow-lg">
+                            신청 완료
+                        </button>
+                    </form>
+                </div>
+            </template>
+
+            <template x-if="emailSubmitted">
+                <div class="py-6">
+                    <i data-lucide="check-circle" class="w-16 h-16 text-emerald-400 mx-auto mb-4 animate-bounce"></i>
+                    <h3 class="text-xl font-bold text-white mb-1">신청이 성공적으로 완료되었습니다!</h3>
+                    <p class="text-xs text-neutral-400">iPhone Duo 알림 목록에 등록되었습니다.</p>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-neutral-500 text-xs py-16 border-t border-neutral-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-neutral-900">
+                <div>
+                    <h3 class="text-white text-lg font-bold">iPhone Duo 출시 소식을 구독하세요.</h3>
+                    <p class="text-xs text-neutral-400 mt-1">새로운 듀얼 디스플레이 폼팩터의 주인공이 되어보세요.</p>
+                </div>
+                <button @click="modalOpen = true" 
+                        :style="`background-color: ${colors[selectedColor].accent};`"
+                        class="text-white font-semibold px-6 py-2.5 rounded-full transition-all text-xs">
+                    사전 알림 등록
+                </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-center text-neutral-600 space-y-4 sm:space-y-0 pt-4">
+                <p>Copyright © 2026 Apple Inc. 모든 권리 보유. (가상 콘셉트 랜딩페이지)</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="hover:underline">개인정보 처리방침</a>
+                    <a href="#" class="hover:underline">이용약관</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

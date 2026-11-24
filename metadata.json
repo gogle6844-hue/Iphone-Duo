@@ -1,0 +1,6 @@
+{
+  "name": "iPhone Duo",
+  "description": "Two Screens. One Masterpiece. 나이트 스카이와 스타 화이트 컬러, 혁신적인 3D 인터랙티브 폴딩 듀얼 스크린 iPhone Duo 쇼케이스.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
